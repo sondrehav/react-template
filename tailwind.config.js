@@ -52,7 +52,7 @@ module.exports = {
         screen: "100dvw",
       },
       fontFamily: {
-        sans: ["Inter"],
+        sans: ["Lexend"],
       },
       fontSize: {
         sm: '0.8rem',

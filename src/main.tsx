@@ -1,5 +1,6 @@
 import './globals.css';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MotionConfig as FramerMotionConfig, MotionGlobalConfig } from 'framer-motion';
 import { cloneElement, PropsWithChildren, ReactElement, ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -12,6 +13,8 @@ import raise from '@/helpers/raise';
 MotionGlobalConfig.skipAnimations =
   import.meta.env.MODE === 'test' ||
   window.matchMedia('(prefers-reduced-motion: reduce)')?.matches;
+
+export const queryClient = new QueryClient();
 
 const MotionConfig = ({ children }: PropsWithChildren) => {
   return (
@@ -28,6 +31,7 @@ const MotionConfig = ({ children }: PropsWithChildren) => {
 
 const providers: Array<ReactElement<PropsWithChildren>> = [
   <BrowserRouter key={'BrowserRouter'} />,
+  <QueryClientProvider key={'QueryClientProvider'} client={queryClient} />,
   <MotionConfig key={'MotionConfig'} />,
 ];
 
