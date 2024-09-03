@@ -21,7 +21,7 @@ const MotionConfig = ({ children }: PropsWithChildren) => {
     <FramerMotionConfig
       transition={{
         ease: 'easeOut',
-        duration: 0.1,
+        duration: 0.25,
       }}
     >
       {children}
