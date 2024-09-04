@@ -1,18 +1,40 @@
 /** @type {import('tailwindcss').Config} */
 
+const primaryHue = 220;
+const secondaryHue = primaryHue + 180;
+const lightness = {
+  950: { l: 0.170088525235326, s: 0.74314718055994  },
+  900: { l: 0.278683758374059, s: 0.691853886172395 },
+  800: { l: 0.421407044320478, s: 0.637786664902119 },
+  700: { l: 0.578592955679522,  s: 0.580628251062171 },
+  600: { l: 0.721316241625941,  s: 0.520003629245736 },
+  500: { l: 0.829911474764674,   s: 0.455465108108164 },
+  400: { l: 0.901942789249979,  s: 0.386472236621213 },
+  300: { l: 0.94547354958496,  s: 0.312364264467491 },
+  200: { l: 0.970315607946413,  s: 0.232321556793955 },
+  100: { l: 0.984030873379901,  s: 0.145310179804325 },
+  50: {  l: 0.991464929839659,  s: 0.05              },
+};
+
+const generateColors = ({ hue = 0, saturation = 1, defaults = [] }) => {
+  const values = Object.entries(lightness).reduce((a, [key, value]) => ({...a, [key]: `hsl(${hue}, ${value.s * 100 * saturation}%, ${value.l * 100}%)`}), {});
+  return {
+    ...values,
+    ...defaults.reduce((a, [key, value]) => ({...a, [key]: values[value] }), {})
+  }
+}
+
+const primary = generateColors({ hue: primaryHue, saturation: 1.25, defaults: [ ["DEFAULT", 500], ["dark", 950 ], ["light", 200 ] ]});
+const gray = generateColors({ hue: primaryHue, saturation: 0.1 });
+const secondary = generateColors({ hue: secondaryHue, saturation: 1.5, defaults: [ ["DEFAULT", 500], ["light", 200] ]});
+
+console.log(JSON.stringify(primary, undefined, 4));
+
 module.exports = {
   content: ['./src/**/*.{html,tsx,ts}', './index.html'],
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: "#2C404B",
-          light: "#F3F3F5"
-        },
-        secondary: {
-          DEFAULT: '#007C89',
-          light: "#00BFD4"
-        },
         alert: {
           DEFAULT: "#DD2E21",
           light: "#F4B9B5"
@@ -25,19 +47,9 @@ module.exports = {
           DEFAULT: "#b79050",
           light: "#e0bb7e",
         },
-        gray: {
-          50:"#f7f7fa",
-          100:"#F3F3F5",
-          200:"#E7E7EA",
-          300:"#D0CED6",
-          400:"#adabb3",
-          500:"#8E8C89",
-          600:"#676563",
-          700:"#535250",
-          800:"#3b3a38",
-          900:"#2D2C2B",
-          950:"#121211",
-        }
+        gray,
+        primary,
+        secondary,
       },
       height: {
         screen: "100dvh",

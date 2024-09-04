@@ -10,8 +10,7 @@ import App from '@/App';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import raise from '@/helpers/raise';
 
-MotionGlobalConfig.skipAnimations =
-  import.meta.env.MODE === 'test' ||
+MotionGlobalConfig.skipAnimations = //import.meta.env.MODE === 'test' ||
   window.matchMedia('(prefers-reduced-motion: reduce)')?.matches;
 
 export const queryClient = new QueryClient();
