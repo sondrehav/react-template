@@ -1,62 +1,30 @@
 import { DefaultError, useMutation, useQuery } from '@tanstack/react-query';
 import classNames from 'classnames';
-import { AnimatePresence, motion, Transition } from 'framer-motion';
-import { useForm } from 'react-hook-form';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Controller, useForm } from 'react-hook-form';
+import { NavLink, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { v4 } from 'uuid';
 
+import {
+  cardAnimation,
+  containerWithStaggeredChildrenAnimation,
+  expandAnimation,
+  fadeFromLeftAnimation,
+} from '@/animations';
+import Button from '@/components/core/Button';
+import Input from '@/components/core/Input';
+import BugSm from '@/components/icons/Bug.svg';
+import CircleSm from '@/components/icons/Circle.svg';
 import CrossSm from '@/components/icons/Close.svg';
+import EditSm from '@/components/icons/Edit.svg';
 import { queryClient } from '@/main';
 
 type PostNameApiRequestBody = { name: string };
 type PostNameApiResponseBody = { name: string; id: string };
 type GetNamesApiResponseBody = Array<{ name: string; id: string }>;
 
-const cardAnimation = {
-  hidden: { opacity: 0, left: -20 } satisfies Transition,
-  exit: { opacity: 0, left: 20, rotate: [0, -4, 0] } satisfies Transition,
-  visible: {
-    rotate: [0, -4, 0],
-    opacity: 1,
-    left: 0,
-  } satisfies Transition,
-};
-
-const itemAnimation = {
-  hidden: { opacity: 0, left: -10 } satisfies Transition,
-  visible: {
-    opacity: 1,
-    left: 0,
-  } satisfies Transition,
-};
-
-const expandAnimation = {
-  hidden: { opacity: 0, height: 0, left: -10 } satisfies Transition,
-  visible: {
-    opacity: 1,
-    left: 0,
-    height: 'auto',
-  } satisfies Transition,
-};
-
-const containerAnimation = {
-  hidden: { opacity: 0, left: -10 } satisfies Transition,
-  visible: {
-    opacity: 1,
-    left: 0,
-    transition: {
-      delayChildren: 0,
-      staggerChildren: 0.1,
-    },
-  } satisfies Transition,
-};
-
 const NameForm = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isValid, isDirty },
-  } = useForm<PostNameApiRequestBody>({
+  const { handleSubmit, reset, control } = useForm<PostNameApiRequestBody>({
     defaultValues: {
       name: '',
     },
@@ -83,8 +51,8 @@ const NameForm = () => {
     //       throw { ...e, id: v4() };
     //     }),
     mutationFn: async (body) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       reset();
+      await new Promise((resolve) => setTimeout(resolve, 10));
       return { ...body, id: v4() };
     },
 
@@ -102,29 +70,27 @@ const NameForm = () => {
       onSubmit={handleSubmit(mutate)}
       className={'flex flex-col'}
     >
-      <div className={'flex flex-col gap-1 mb-4'}>
-        <label htmlFor={'name-input'}>Name</label>
-        <input
-          {...register('name', { required: true })}
-          placeholder={'Name...'}
-          id={'name-input'}
-          data-testid={'name-input'}
-          className={classNames(
-            'rounded-xl bg-white px-6 py-3 text-base placeholder:text-gray-400 transition-all border-white border-4 hover:border-gray-300 focus:border-primary-dark',
-            { 'border-alert': !isValid && isDirty },
-          )}
-        />
-      </div>
-      <button
-        data-testid={'name-form-submit'}
-        type={'submit'}
-        disabled={isPending}
-        className={
-          'rounded-full bg-primary-dark text-primary-light max-w-min px-5 py-3 text-base font-semibold transition-colors focus:bg-primary-dark hover:bg-primary-dark action:bg-primary-light disabled:bg-gray-200'
-        }
-      >
+      <Controller<PostNameApiRequestBody, 'name'>
+        control={control}
+        name={'name'}
+        rules={{ required: { value: true, message: 'Name is required' } }}
+        render={({ field, fieldState }) => (
+          <Input
+            {...field}
+            autoComplete={false}
+            placeholder={'Name...'}
+            label={'Name'}
+            id={'name-input'}
+            data-testid={'name-input'}
+            errorId={fieldState.error?.type}
+            errorMessage={fieldState.error?.message}
+            wrapperClassName={'mb-4'}
+          />
+        )}
+      />
+      <Button data-testid={'name-form-submit'} type={'submit'} disabled={isPending}>
         Submit
-      </button>
+      </Button>
       <AnimatePresence>
         {error && (
           <motion.span
@@ -187,7 +153,7 @@ const NamesList = () => {
             className={'relative flex flex-col'}
             initial={'hidden'}
             animate={'visible'}
-            variants={containerAnimation}
+            variants={containerWithStaggeredChildrenAnimation}
           >
             <AnimatePresence>
               {data.map((item) => (
@@ -199,8 +165,8 @@ const NamesList = () => {
         {isLoading && (
           <motion.span
             key={'pending-indicator'}
-            className={'relative text-primary-500 italic'}
-            variants={itemAnimation}
+            className={'relative text-primary-dark italic'}
+            variants={fadeFromLeftAnimation}
             initial={'hidden'}
             exit={'hidden'}
             animate={'visible'}
@@ -262,7 +228,7 @@ const NameListItem = ({ name, id }: { name: string; id: string }) => {
     <motion.li
       key={id}
       className={
-        'relative py-2 mb-1 bg-white rounded p-4 origin-top-right flex items-center gap-2'
+        'relative py-2 mb-1 bg-gray-50 rounded p-4 origin-top-right flex items-center gap-2 shadow-subtle border-2 border-gray-400'
       }
       data-testid={'names-list-item'}
       variants={cardAnimation}
@@ -283,47 +249,190 @@ const NameListItem = ({ name, id }: { name: string; id: string }) => {
   );
 };
 
-const Col = ({ className }: { className?: string }) => {
-  return <div className={classNames('rounded-lg size-8', className)}></div>;
+const NavLinkItem = ({
+  to,
+  name,
+  logoUrl,
+}: {
+  to: string;
+  name: string;
+  logoUrl: string | null;
+}) => (
+  <motion.li className={'relative'} variants={cardAnimation}>
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        classNames(
+          'relative py-2 mb-4 rounded p-4 origin-top-right flex items-center gap-2 transition-colors group hover:text-primary-dark focus:text-primary-dark',
+          {
+            'bg-gray-50 shadow-subtle text-primary-dark font-semibold': isActive,
+            'text-gray-800': !isActive,
+          },
+        )
+      }
+    >
+      <BugSm className={'size-6 fill-current'} />
+      <span className={'flex-1 truncate overflow-hidden'}>{name}</span>
+      <button
+        className={
+          'flex-grow-0 flex-shrink-0 transition-all text-primary-400 focus:text-gray-500 hover:text-primary-dark opacity-0 pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 group-focus:opacity-100 group-focus:pointer-events-auto'
+        }
+      >
+        <EditSm className={'size-6 fill-current'} />
+      </button>
+    </NavLink>
+  </motion.li>
+);
+
+const Title = () => {
+  const slug = 'nasnas';
+  return (
+    <div className={'flex flex-col gap-1'}>
+      <h1 className={'mt-0'}>{slug}</h1>
+    </div>
+  );
 };
 
-const ColorGrid = () => {
+type GetProjectDetailsApiResponseBody = {
+  id: string;
+  slug: string;
+  name: string;
+  logoUrl: string | null;
+};
+
+const ProjectPage = () => {
+  const slug = useParams<{ slug: string }>().slug;
+
+  const { isLoading, error, data } = useQuery<
+    unknown,
+    DefaultError & { id: string },
+    GetProjectDetailsApiResponseBody
+  >({
+    enabled: !!slug,
+    queryKey: [`projects/${slug}`],
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      return {
+        id: '628546f8-3765-42e6-90c7-b09856e7b6bb',
+        slug: 'coop',
+        name: 'Coop gavekort',
+        logoUrl: null,
+      };
+    },
+  });
   return (
-    <div className={'grid grid-cols-3 mx-auto gap-4'}>
-      <Col className={'bg-primary-50'} />
-      <Col className={'bg-secondary-50'} />
-      <Col className={'bg-gray-50'} />
-      <Col className={'bg-primary-100'} />
-      <Col className={'bg-secondary-100'} />
-      <Col className={'bg-gray-100'} />
-      <Col className={'bg-primary-200'} />
-      <Col className={'bg-secondary-200'} />
-      <Col className={'bg-gray-200'} />
-      <Col className={'bg-primary-300'} />
-      <Col className={'bg-secondary-300'} />
-      <Col className={'bg-gray-300'} />
-      <Col className={'bg-primary-400'} />
-      <Col className={'bg-secondary-400'} />
-      <Col className={'bg-gray-400'} />
-      <Col className={'bg-primary-500'} />
-      <Col className={'bg-secondary-500'} />
-      <Col className={'bg-gray-500'} />
-      <Col className={'bg-primary-600'} />
-      <Col className={'bg-secondary-600'} />
-      <Col className={'bg-gray-600'} />
-      <Col className={'bg-primary-700'} />
-      <Col className={'bg-secondary-700'} />
-      <Col className={'bg-gray-700'} />
-      <Col className={'bg-primary-800'} />
-      <Col className={'bg-secondary-800'} />
-      <Col className={'bg-gray-800'} />
-      <Col className={'bg-primary-900'} />
-      <Col className={'bg-secondary-900'} />
-      <Col className={'bg-gray-900'} />
-      <Col className={'bg-primary-950'} />
-      <Col className={'bg-secondary-950'} />
-      <Col className={'bg-gray-950'} />
-    </div>
+    <motion.main
+      className={'py-6 pr-6 relative w-full h-full '}
+      initial={'hidden'}
+      animate={!data ? 'hidden' : 'visible'}
+      exit={'hidden'}
+      variants={fadeFromLeftAnimation}
+    >
+      <div className={'bg-gray-50 rounded-xl h-full shadow-subtle p-12 component-grid'}>
+        <div className={'col-span-3'}>
+          <h1 className={'mt-0'}>{data?.name}</h1>
+        </div>
+        <div className={'col-span-2'}>
+          <h2 className={'h4'}>Visitors</h2>
+          <Input className={'max-w-sm'} placeholder={'Banan'} label={'Banan'} />
+        </div>
+        <div>
+          <h2 className={'h4'}>Geographic distribution</h2>
+        </div>
+        <div>
+          <h2 className={'h4'}>Pages</h2>
+        </div>
+        <div>
+          <h2 className={'h4'}>Referrals</h2>
+        </div>
+        <div>
+          <h2 className={'h4'}>Devices</h2>
+        </div>
+        {/*<div className={'max-w-sm'}>*/}
+        {/*  <h1 className={'mt-0'}>{slug}</h1>*/}
+        {/*  <NameForm />*/}
+        {/*  <NamesList />*/}
+        {/*</div>*/}
+      </div>
+    </motion.main>
+  );
+};
+
+const Inner = () => {
+  const location = useLocation();
+  const key = location.pathname.split('/')[1];
+  return (
+    <AnimatePresence mode={'wait'}>
+      <Routes location={location} key={key}>
+        <Route path={'/:slug'} element={<ProjectPage />}></Route>
+        <Route path={'/'} element={':('}></Route>
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
+type GetProjectListApiResponseBody = Array<{
+  name: string;
+  slug: string;
+  id: string;
+  logoUrl: string | null;
+}>;
+
+const ProjectList = () => {
+  const { isLoading, error, data } = useQuery<
+    GetProjectListApiResponseBody,
+    DefaultError & { id: string },
+    GetProjectListApiResponseBody
+  >({
+    queryKey: ['projects'],
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      return [
+        {
+          id: '628546f8-3765-42e6-90c7-b09856e7b6bb',
+          slug: 'coop',
+          name: 'Coop gavekort',
+          logoUrl: null,
+        },
+        {
+          id: '97651ef3-a2c5-416e-8a30-4a7a65b1459f',
+          slug: 'tavler',
+          name: 'Tavler Tavler Tavler Tavler',
+          logoUrl: null,
+        },
+        {
+          id: '58c8e8da-83d9-4529-9f0d-6dab361dfb54',
+          slug: 'europris',
+          name: 'Europris',
+          logoUrl: null,
+        },
+        {
+          id: 'b1ceb21a-1fe4-4373-963a-1ce714388bbe',
+          slug: 'eplehuset',
+          name: 'Eplehuset',
+          logoUrl: null,
+        },
+        {
+          id: 'df2cbd06-de31-4025-9fd5-b29787c4fee7',
+          slug: 'goodtech',
+          name: 'Goodtech',
+          logoUrl: null,
+        },
+      ];
+    },
+  });
+
+  return (
+    <motion.ul
+      className={'relative flex flex-col w-full'}
+      animate={!data ? 'hidden' : 'visible'}
+      initial={'hidden'}
+      variants={containerWithStaggeredChildrenAnimation}
+    >
+      {data?.map(({ logoUrl, name, id, slug }) => (
+        <NavLinkItem logoUrl={logoUrl} key={id} name={name} to={`/${slug}`} />
+      ))}
+    </motion.ul>
   );
 };
 
@@ -331,17 +440,15 @@ const App = () => {
   return (
     <AnimatePresence>
       <motion.div
-        className={
-          'flex flex-col h-full container mx-auto py-16 px-2 gap-8 max-w-sm relative'
-        }
+        className={'flex h-full'}
         initial={'hidden'}
         animate={'visible'}
-        variants={containerAnimation}
+        variants={fadeFromLeftAnimation}
       >
-        <ColorGrid />
-        <h1>Hello, World!</h1>
-        <NameForm />
-        <NamesList />
+        <nav className={'flex h-full sidebar-nav overflow-hidden p-6'}>
+          <ProjectList />
+        </nav>
+        <Inner />
       </motion.div>
     </AnimatePresence>
   );
