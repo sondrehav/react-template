@@ -29,7 +29,7 @@ const secondary = generateColors({ hue: secondaryHue, saturation: 1.5, defaults:
 const gray = generateColors({ hue: primaryHue, saturation: 0.1 });
 
 module.exports = {
-  content: ['./src/**/*.{html,tsx,ts}', './index.html'],
+  content: ['./app/**/*.{html,tsx,ts}'],
   theme: {
     extend: {
       colors: {
