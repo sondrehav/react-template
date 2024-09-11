@@ -2,9 +2,9 @@ import { Transition } from 'framer-motion';
 
 export const cardAnimation = {
   hidden: { opacity: 0, left: -20 } satisfies Transition,
-  exit: { opacity: 0, left: 20, rotate: [0, -4, 0] } satisfies Transition,
+  exit: { opacity: 0, left: 20, scale: [0, 1.02, 1] } satisfies Transition,
   visible: {
-    rotate: [0, -4, 0],
+    scale: [0, 1.05, 1],
     opacity: 1,
     left: 0,
   } satisfies Transition,
@@ -37,7 +37,7 @@ export const containerWithStaggeredChildrenAnimation = {
     left: 0,
     transition: {
       delayChildren: 0,
-      staggerChildren: 0.2,
+      staggerChildren: 0.1,
     },
   } satisfies Transition,
 };

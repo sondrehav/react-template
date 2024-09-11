@@ -1,7 +1,7 @@
 import './globals.css';
 
 import { LinksFunction } from '@remix-run/node';
-import { Links, Meta, Scripts } from '@remix-run/react';
+import { Links, Meta, Outlet, Scripts } from '@remix-run/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MotionConfig as FramerMotionConfig, MotionGlobalConfig } from 'framer-motion';
 import React, {
@@ -12,7 +12,6 @@ import React, {
   useEffect,
 } from 'react';
 
-import BananaApp from '@/App';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import stylesheet from '@/globals.css?url';
 
@@ -25,7 +24,6 @@ const MotionConfig = ({ children }: PropsWithChildren) => {
     MotionGlobalConfig.skipAnimations = window?.matchMedia(
       '(prefers-reduced-motion: reduce)',
     )?.matches;
-    return () => {};
   }, []);
   return (
     <FramerMotionConfig
@@ -75,15 +73,5 @@ export function Layout({ children }: PropsWithChildren) {
 }
 
 export default function App() {
-  return <BananaApp />;
+  return <Outlet />;
 }
-//
-// const root =
-//   document.getElementById('root') ??
-//   raise(new Error("No element with id 'root' in DOM."));
-//
-// createRoot(root).render(
-//   <Config>
-//     <App />
-//   </Config>,
-// );
