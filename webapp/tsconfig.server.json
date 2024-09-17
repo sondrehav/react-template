@@ -1,0 +1,20 @@
+{
+  "references": [{ "path": "./tsconfig.node.json"}],
+
+  "compilerOptions": {
+    "composite": true,
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "noEmit": false,
+    "skipLibCheck": true,
+    "outDir": "build"
+  },
+  "files": [
+    "server.ts",
+    "build/server/index.js"
+  ],
+}

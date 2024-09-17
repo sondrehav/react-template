@@ -1,0 +1,54 @@
+version: '3'
+
+
+services:
+#  web:
+#    container_name: ingest-web
+#    build:
+#      context: ./web
+#      dockerfile: ./Dockerfile
+#    ports:
+#      - "4679:80"
+#    depends_on:
+#      - ingest
+#    networks:
+#      - frontend
+#
+#  ingest:
+#    container_name: ingest-ingest
+#    build:
+#      context: ./ingest
+#      dockerfile: ./Dockerfile
+#    ports:
+#      - "4678:4678"
+#    depends_on:
+#      - ingest-db
+#    networks:
+#      - frontend
+#      - backend
+#    environment:
+#      DB_PORT: 5432
+#      DB_HOST: db
+#      DB_USER: username
+#      DB_PASSWORD: password
+#      DB_DATABASE: default_database
+
+  db:
+    container_name: ingest-db
+    image: 'postgres:latest'
+    ports:
+      - "4677:5432"
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: default_database
+    networks:
+      - backend
+    volumes:
+      - ./db/data:/var/lib/postgresql
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge

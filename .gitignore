@@ -4,6 +4,8 @@
 /node_modules
 /.pnp
 .pnp.js
+*/node_modules
+
 
 # testing
 /coverage
@@ -35,5 +37,9 @@ yarn-error.log*
 .idea
 .vscode
 
-/tests/reports
+/webapp/tests/reports
 
+db
+webapp/build
+lib/dist
+webapp/tests/reports

@@ -1,0 +1,345 @@
+{
+  "id": "594e7087-b854-4a6e-a61c-72bc71dc6845",
+  "prevId": "c818c907-7340-4f80-86ee-c24d2aade0c2",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.entries": {
+      "name": "entries",
+      "schema": "",
+      "columns": {
+        "entryId": {
+          "name": "entryId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "projectId": {
+          "name": "projectId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "entryType": {
+          "name": "entryType",
+          "type": "entryType",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "data": {
+          "name": "data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "sessionId": {
+          "name": "sessionId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "projectIdTypeIndex": {
+          "name": "projectIdTypeIndex",
+          "columns": [
+            {
+              "expression": "projectId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "entryType",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "projectIdCreatedAtIndex": {
+          "name": "projectIdCreatedAtIndex",
+          "columns": [
+            {
+              "expression": "projectId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "createdAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "entries_projectId_projects_projectId_fk": {
+          "name": "entries_projectId_projects_projectId_fk",
+          "tableFrom": "entries",
+          "tableTo": "projects",
+          "columnsFrom": [
+            "projectId"
+          ],
+          "columnsTo": [
+            "projectId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.organizations": {
+      "name": "organizations",
+      "schema": "",
+      "columns": {
+        "organizationId": {
+          "name": "organizationId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logoUrl": {
+          "name": "logoUrl",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NCIgaGVpZ2h0PSI0MSIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDU0IDQxIj48cGF0aCBmaWxsPSIjMkEyRTRFIiBkPSJNNTQgMS41YTEuNSAxLjUgMCAxIDEtMyAwIDEuNSAxLjUgMCAwIDEgMyAwWiI+PC9wYXRoPjxwYXRoIGZpbGw9IiMyQTJFNEUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTEzLjc1IDQwLjc5NEM2LjE1NiA0MC43OTQgMCAzNC42MzggMCAyNy4wNDRWMWg1djI2LjA0NGE4Ljc1IDguNzUgMCAwIDAgOC43NSA4Ljc1YzQuODkzIDAgOC43NS0zLjc3MSA4Ljc1LTguNTQ0aDV2Ny41YTEuMjUgMS4yNSAwIDAgMCAyLjUgMHYtOC44NzVhNi4yNSA2LjI1IDAgMCAxLTcuNS02LjEyNVY3LjI1YTYuMjUgNi4yNSAwIDEgMSAxMi41IDB2MjcuNWExLjI1IDEuMjUgMCAxIDAgMi41IDBWNy4yNWE2LjI1IDYuMjUgMCAxIDEgMTIuNSAwdjI3LjVhNi4yNSA2LjI1IDAgMCAxLTEwIDVBNi4yMjIgNi4yMjIgMCAwIDEgMzYuMjUgNDFhNi4yMjIgNi4yMjIgMCAwIDEtMy43NS0xLjI1IDYuMjUxIDYuMjUxIDAgMCAxLTkuNDY2LTIuNDdjLTIuNDU2IDIuMTk3LTUuNzIzIDMuNTE0LTkuMjg0IDMuNTE0Wm0zMC00Ljc5NGMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1VjcuMjVhMS4yNSAxLjI1IDAgMSAxIDIuNSAwdjI3LjVjMCAuNjktLjU2IDEuMjUtMS4yNSAxLjI1Wk0zMCAxOS43NWExLjI1IDEuMjUgMCAwIDEtMi41IDBWNy4yNWExLjI1IDEuMjUgMCAxIDEgMi41IDB2MTIuNVoiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjxwYXRoIGZpbGw9IiMyQTJFNEUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTcuNSAyNy4yNWE2LjI1IDYuMjUgMCAxIDAgMTIuNSAwdi0yMGE2LjI1IDYuMjUgMCAxIDAtMTIuNSAwdjIwWm02LjI1IDEuMjVjLS42OSAwLTEuMjUtLjU2LTEuMjUtMS4yNXYtMjBhMS4yNSAxLjI1IDAgMSAxIDIuNSAwdjIwYzAgLjY5LS41NiAxLjI1LTEuMjUgMS4yNVoiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvc3ZnPg=='"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.projects": {
+      "name": "projects",
+      "schema": "",
+      "columns": {
+        "projectId": {
+          "name": "projectId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logoUrl": {
+          "name": "logoUrl",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NCIgaGVpZ2h0PSI0MSIgZmlsbD0ibm9uZSIgdmlld0JveD0iMCAwIDU0IDQxIj48cGF0aCBmaWxsPSIjMkEyRTRFIiBkPSJNNTQgMS41YTEuNSAxLjUgMCAxIDEtMyAwIDEuNSAxLjUgMCAwIDEgMyAwWiI+PC9wYXRoPjxwYXRoIGZpbGw9IiMyQTJFNEUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTEzLjc1IDQwLjc5NEM2LjE1NiA0MC43OTQgMCAzNC42MzggMCAyNy4wNDRWMWg1djI2LjA0NGE4Ljc1IDguNzUgMCAwIDAgOC43NSA4Ljc1YzQuODkzIDAgOC43NS0zLjc3MSA4Ljc1LTguNTQ0aDV2Ny41YTEuMjUgMS4yNSAwIDAgMCAyLjUgMHYtOC44NzVhNi4yNSA2LjI1IDAgMCAxLTcuNS02LjEyNVY3LjI1YTYuMjUgNi4yNSAwIDEgMSAxMi41IDB2MjcuNWExLjI1IDEuMjUgMCAxIDAgMi41IDBWNy4yNWE2LjI1IDYuMjUgMCAxIDEgMTIuNSAwdjI3LjVhNi4yNSA2LjI1IDAgMCAxLTEwIDVBNi4yMjIgNi4yMjIgMCAwIDEgMzYuMjUgNDFhNi4yMjIgNi4yMjIgMCAwIDEtMy43NS0xLjI1IDYuMjUxIDYuMjUxIDAgMCAxLTkuNDY2LTIuNDdjLTIuNDU2IDIuMTk3LTUuNzIzIDMuNTE0LTkuMjg0IDMuNTE0Wm0zMC00Ljc5NGMtLjY5IDAtMS4yNS0uNTYtMS4yNS0xLjI1VjcuMjVhMS4yNSAxLjI1IDAgMSAxIDIuNSAwdjI3LjVjMCAuNjktLjU2IDEuMjUtMS4yNSAxLjI1Wk0zMCAxOS43NWExLjI1IDEuMjUgMCAwIDEtMi41IDBWNy4yNWExLjI1IDEuMjUgMCAxIDEgMi41IDB2MTIuNVoiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjxwYXRoIGZpbGw9IiMyQTJFNEUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTcuNSAyNy4yNWE2LjI1IDYuMjUgMCAxIDAgMTIuNSAwdi0yMGE2LjI1IDYuMjUgMCAxIDAtMTIuNSAwdjIwWm02LjI1IDEuMjVjLS42OSAwLTEuMjUtLjU2LTEuMjUtMS4yNXYtMjBhMS4yNSAxLjI1IDAgMSAxIDIuNSAwdjIwYzAgLjY5LS41NiAxLjI1LTEuMjUgMS4yNVoiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvc3ZnPg=='"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "projectSlugUniqueIndex": {
+          "name": "projectSlugUniqueIndex",
+          "columns": [
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "organizationId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "projects_organizationId_organizations_organizationId_fk": {
+          "name": "projects_organizationId_organizations_organizationId_fk",
+          "tableFrom": "projects",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "organizationId"
+          ],
+          "columnsTo": [
+            "organizationId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "salt": {
+          "name": "salt",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profileUrl": {
+          "name": "profileUrl",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'data:image/svg+xml;charset=utf-8;base64,PHN2ZyB3aWR0aD0iODA4IiBoZWlnaHQ9IjgzOSIgdmlld0JveD0iMCAwIDgwOCA4MzkiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0wIDBIODA4VjgzOUgwVjBaIiBmaWxsPSIjRDlEOUQ5Ii8+CjxwYXRoIGQ9Ik0zMTguNjExIDYxOEMzMDkuNjExIDc2NiAyOS42MTEzIDc0OCAzNi4xMTE0IDgzOUg3NzEuMTFDNzc3LjYxIDc0OCA0OTcuNjExIDc2NiA0ODguNjExIDYxOEM1MDMuNjcxIDU5Mi4yNTkgNTExLjM1NSA1NzAuODggNTIzLjYxMSA1MTkuNUM1NTkuMTExIDUwNSA1NjQuMTExIDQ0MSA1NDIuNjExIDQxMS41QzU4Mi4xMTEgMzI4LjUgNTM2LjExMSAyMDYgNDAzLjYxMSAyMDZDMjcxLjExMSAyMDYgMjI1LjExMSAzMjguNSAyNjQuNjExIDQxMS41QzI0My4xMTEgNDQxIDI0OC4xMTEgNTA1IDI4My42MTEgNTE5LjVDMjk1Ljg2OCA1NzAuODggMzAzLjU1MSA1OTIuMjU5IDMxOC42MTEgNjE4WiIgZmlsbD0iI0E0QTRBNCIvPgo8L3N2Zz4K'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "organizationId": {
+          "name": "organizationId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "userEmailUniqueIndex": {
+          "name": "userEmailUniqueIndex",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "users_organizationId_organizations_organizationId_fk": {
+          "name": "users_organizationId_organizations_organizationId_fk",
+          "tableFrom": "users",
+          "tableTo": "organizations",
+          "columnsFrom": [
+            "organizationId"
+          ],
+          "columnsTo": [
+            "organizationId"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {
+    "public.entryType": {
+      "name": "entryType",
+      "schema": "public",
+      "values": [
+        "pageView",
+        "load",
+        "error"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
