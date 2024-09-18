@@ -210,26 +210,16 @@ export default function Project() {
         variants={containerWithStaggeredChildrenAnimation}
         className={'flex gap-4'}
       >
-        <div className={'flex flex-col gap-4 grow-[2] shrink-[2]'}>
+        <div className={'flex flex-col gap-4 grow-[2] shrink-[2] basis-0'}>
           <Card>
             <CardHeader>
               <CardTitle>Visitors</CardTitle>
             </CardHeader>
-            <CardContent>
-              {/*<BarChart />*/}
-              {/*<ul>*/}
-              {/*  {data.entries.map((s) => (*/}
-              {/*    <li key={s.starttime} className={'px-2 py-1 flex items-center gap-2'}>*/}
-              {/*      <span className={'font-normal'}>*/}
-              {/*        {formatDate(s.starttime, 'HH:mm')}:*/}
-              {/*      </span>*/}
-              {/*      <b>{s.views}</b>*/}
-              {/*    </li>*/}
-              {/*  ))}*/}
-              {/*</ul>*/}
+            <CardContent className={'relative'}>
+              <BarChart data={data.entries} />
             </CardContent>
           </Card>
-          <Card className={'grow-[2]'}>
+          <Card className={'grow-[2]  basis-0'}>
             <CardHeader>
               <CardTitle>Geographical distribution</CardTitle>
             </CardHeader>
@@ -237,7 +227,7 @@ export default function Project() {
           </Card>
         </div>
 
-        <div className={'grow-[1] shrink-[1] flex flex-col gap-4'}>
+        <div className={'grow-[1] shrink-[1] flex flex-col gap-4 basis-0'}>
           <Card>
             <CardHeader>
               <CardTitle>Sources</CardTitle>

@@ -12,7 +12,6 @@ import React, {
   useEffect,
 } from 'react';
 
-import ErrorBoundary from '@/components/ErrorBoundary';
 import stylesheet from '@/globals.css?url';
 
 export const queryClient = new QueryClient();

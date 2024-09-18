@@ -29,6 +29,27 @@
       "when": 1726485042714,
       "tag": "0003_melodic_sentinels",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1726565738618,
+      "tag": "0004_adorable_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1726565797328,
+      "tag": "0005_little_magik",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1726567105265,
+      "tag": "0006_keen_rumiko_fujikawa",
+      "breakpoints": true
     }
   ]
 }

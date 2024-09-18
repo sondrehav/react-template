@@ -98,7 +98,7 @@ const sessionIdMiddleware = (req: Request, res: Response, next: NextFunction) =>
     const sessionId = v4();
     const text =
       'insert into entries("projectId", "entryType", "sessionId", "data") VALUES($1, $2, $3, $4) RETURNING *';
-    const values = [req.context!.projectId, 'load', sessionId, data];
+    const values = [req.context!.projectId, 'load', sessionId, JSON.stringify(data)];
     await client.query(text, values);
     res.cookie('ingest-session-id', sessionId, {
       secure: false,
@@ -114,10 +114,11 @@ const sessionIdMiddleware = (req: Request, res: Response, next: NextFunction) =>
     async (req, res) => {
       const type = req.params.eventType;
       const data = req.body;
+
       const sessionId = req.context!.sessionId ?? null;
       const text =
         'insert into entries("projectId", "entryType", "sessionId", "data") VALUES($1, $2, $3, $4) RETURNING *';
-      const values = [req.context!.projectId, type, sessionId, data];
+      const values = [req.context!.projectId, type, sessionId, JSON.stringify(data)];
       await client.query(text, values);
       res.sendStatus(201);
     },
