@@ -39,7 +39,7 @@ yarn-error.log*
 
 /webapp/tests/reports
 
-db
-webapp/build
-lib/dist
-webapp/tests/reports
+/db
+/webapp/build
+/lib/dist
+/webapp/tests/reports
